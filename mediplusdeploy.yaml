@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skmirza-mediplus-deploy
+  labels:
+    app: skmirza-mediplus-deploy-lb01
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: skmirza-mediplus-app
+  template:
+    metadata:
+      labels:
+        app: skmirza-mediplus-app
+    spec:
+      containers:
+      - name: skmirza-mediplus-container
+        image: sameer014/skmirza-mediplus-img:latest
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 8087
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: skmirza-mediplus-np-service
+  labels:
+    app: skmirza-mediplus-np-app
+spec:
+  selector:
+    app: skmirza-mediplus-app
+
+  type: NodePort
+  ports:
+  - nodePort: 30020
+    port: 8087
+    targetPort: 8087
